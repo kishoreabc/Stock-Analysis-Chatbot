@@ -1,0 +1,60 @@
+/* ChatMessage.css */
+.chat-message {
+    display: flex;
+    padding: 1.5rem 2rem;
+    gap: 1.5rem;
+    align-items: flex-start;
+    max-width: fit-content;
+  }
+  
+  .ai-message {
+    background-color: #f7f7f8;
+    margin-right: auto;
+    border-radius: 0.75rem 0.75rem 0.75rem 0;
+  }
+  
+  .user-message {
+    background-color: #10a37f;
+    color: white;
+    margin-left: auto;
+    border-radius: 0.75rem 0.75rem 0 0.75rem;
+    flex-direction: row-reverse;
+  }
+  
+  .message-avatar {
+    flex-shrink: 0;
+  }
+  
+  .ai-avatar, .user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  .ai-avatar {
+    background-color: #10a37f;
+    color: white;
+  }
+  
+  .user-avatar {
+    background-color: #5436DA;
+    color: white;
+  }
+  
+  .message-content {
+    font-size: 1rem;
+    white-space: pre-wrap;
+    max-width: calc(100% - 60px);
+  }
+  
+  /* Container for messages to align them properly */
+  .chat-messages {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+  }

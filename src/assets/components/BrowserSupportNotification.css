@@ -1,0 +1,15 @@
+/* Add this to your ChatApp.css file */
+.browser-support-notification {
+    margin-top: 2rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #fff4f4;
+    border: 1px solid #ffdddd;
+    border-radius: 0.5rem;
+    max-width: 80%;
+    text-align: center;
+  }
+  
+  .browser-support-notification p {
+    font-size: 0.9rem;
+    color: #e63946;
+  }

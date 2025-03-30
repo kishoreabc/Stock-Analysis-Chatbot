@@ -1,0 +1,142 @@
+/* ChatInput.css */
+.chat-input-container {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    padding: 0.5rem 2rem 1.5rem;
+    background-color: white;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .chat-input-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 48rem;
+    margin: 0 auto;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1rem;
+    transition: background-color 0.2s;
+  }
+  
+  .chat-input-form:has(.chat-input:disabled) {
+    background-color: #f5f5f5;
+    opacity: 0.8;
+  }
+  
+  .chat-input {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 1rem;
+    font-family: inherit;
+    padding: 0;
+    line-height: 1.5;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .chat-input:disabled {
+    color: #888;
+    cursor: not-allowed;
+    background-color: transparent;
+  }
+  
+  .send-button, .voice-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+    transition: all 0.2s;
+  }
+  
+  .send-button {
+    color: #10a37f;
+    opacity: 0.7;
+  }
+  
+  .voice-button {
+    color: #5436DA;
+    opacity: 0.7;
+  }
+  
+  .voice-button.listening {
+    color: #ff4a4a;
+    opacity: 1;
+    animation: pulse 1.5s infinite;
+  }
+  
+  .send-button:hover:not(:disabled),
+  .voice-button:hover:not(:disabled) {
+    opacity: 1;
+  }
+  
+  .send-button:hover:not(:disabled) {
+    background-color: rgba(16, 163, 127, 0.1);
+  }
+  
+  .voice-button:hover:not(:disabled) {
+    background-color: rgba(84, 54, 218, 0.1);
+  }
+  
+  .voice-button.listening:hover {
+    background-color: rgba(255, 74, 74, 0.1);
+  }
+  
+  .send-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  .send-button svg, .voice-button svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .input-footer {
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+  
+  .disclaimer {
+    font-size: 0.8rem;
+    color: #8e8ea0;
+  }
+  
+  .disclaimer.voice-active {
+    color: #ff4a4a;
+    font-weight: 500;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+  
+  /* Add a message for browsers that don't support the API */
+  .voice-not-supported {
+    display: block;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #ff4a4a;
+    margin-top: 0.5rem;
+  }
+  /* Add this to your ChatInput.css file */
+.disclaimer.error {
+    color: #e74c3c;
+    font-weight: 500;
+  }
