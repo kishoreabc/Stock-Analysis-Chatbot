@@ -5,12 +5,14 @@ import ChatSidebar from './ChatSidebar';
 import ChatInput from './ChatInput';
 import BrowserSupportNotification from './BrowserSupportNotification';
 
+// API base URL - change this to match your server
+const API_URL = 'http://localhost:5000';
+
 const ChatApp = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([
     { id: 1, title: 'Welcome to StockGPT', active: true },
-
   ]);
   const messagesEndRef = useRef(null);
 
@@ -24,29 +26,39 @@ const ChatApp = () => {
 
   const handleSendMessage = async (message) => {
     if (!message.trim() || loading) return;
-    
-    // Add user message
+  
     const userMessage = {
       id: Date.now(),
       content: message,
-      sender: 'user',
+      sender: "user",
     };
-    
-    setMessages([...messages, userMessage]);
+  
+    setMessages(prev => [...prev, userMessage]);
     setLoading(true);
-    
-    // Simulate API response delay
-    setTimeout(() => {
-      // Add AI response (in a real app, this would come from your API)
-      const aiMessage = {
-        id: Date.now() + 1,
-        content: message,
-        sender: 'ai',
+  
+    try {
+      const response = await fetch(`${API_URL}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+  
+      const aiMessage = await response.json();
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error("Error communicating with server:", error);
+      
+      const errorMessage = {
+        id: Date.now(),
+        content: "Error connecting to the server. Please try again.",
+        sender: "ai",
+        isError: true,
       };
       
-      setMessages(prevMessages => [...prevMessages, aiMessage]);
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const createNewChat = () => {
@@ -85,7 +97,8 @@ const ChatApp = () => {
         <div className="chat-messages">
           {messages.length === 0 ? (
             <div className="welcome-screen">
-              <h1>StockGPT Clone</h1>
+              <h1>Meet StockGPT,</h1>
+              <h1>Your personal AI finance assistant</h1>
               <p>How can I help you today?</p>
               <BrowserSupportNotification />
             </div>

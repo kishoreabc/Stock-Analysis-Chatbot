@@ -218,7 +218,7 @@ const ChatInput = ({ onSendMessage, isWaiting }) => {
         ) : isWaiting ? (
           <p className="disclaimer">StockGPT is thinking...</p>
         ) : (
-          <p className="disclaimer">StockGPT Clone can make mistakes. Consider checking important information.</p>
+          <p className="disclaimer">StockGPT can make mistakes. Consider checking important information.</p>
         )}
       </div>
     </div>
