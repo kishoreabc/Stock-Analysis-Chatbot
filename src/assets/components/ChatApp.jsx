@@ -14,6 +14,7 @@ const ChatApp = () => {
   const [conversations, setConversations] = useState([
     { id: 1, title: 'Welcome to StockGPT', active: true },
   ]);
+
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -43,8 +44,17 @@ const ChatApp = () => {
         body: JSON.stringify({ message }),
       });
   
+      if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+      }
+      
       const aiMessage = await response.json();
-      setMessages(prev => [...prev, aiMessage]);
+      
+      // Add a slight delay before showing the AI response to make the streaming more noticeable
+
+        setMessages(prev => [...prev, aiMessage]);
+        setLoading(false);
+      
     } catch (error) {
       console.error("Error communicating with server:", error);
       
@@ -56,7 +66,6 @@ const ChatApp = () => {
       };
       
       setMessages(prev => [...prev, errorMessage]);
-    } finally {
       setLoading(false);
     }
   };

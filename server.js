@@ -34,6 +34,7 @@ app.post("/api/chat", async (req, res) => {
   const { object } = await generateObject({
     model: google('gemini-1.5-pro-latest'),
     apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+    system: 'seperate question and stock names from the input.',
     schema: z.object({
       stock_name: z.array(z.string()).describe('List of stock names as named in yahoo finance. For example: ITC.NS, RELIANCE.NS, etc.'),
       question : z.string().describe('question that the user are expexting from the stock. Don\'t include the stock names.'),
@@ -45,7 +46,7 @@ app.post("/api/chat", async (req, res) => {
   const question = object['question'];
   console.log(stock_name);
   console.log(question);
-  
+  await delay(1000);
 
 
   
@@ -60,11 +61,13 @@ let Fundamental_Rating = [];
         Technical_Rating.push({ [stock_name[i]]: {"Rating":result['Technical Analysis'][0],'Explination': result['Technical Analysis'][1]}});
         await delay(2000); // Delay of 2 second between iterations
     }
-    await delay(1000); // Delay of 2 second between iterations
+    await delay(2000); // Delay of 2 second between iterations
+    console.log(`Technical Ratings: ${JSON.stringify(Technical_Rating)}
+        Fundamental Ratings: ${JSON.stringify(Fundamental_Rating)}`);
     const { text } = await generateText({
         model: google('gemini-1.5-pro'),
         apiKey: process.env.GOOGLE_API_KEY,
-        system: 'You are a stock analysis agent and answer only questions related to stock market, investment and related stuff. Answer based on the given analysis, or recommend whether to buy the stock in the current market condition.If the question is on general part give a professional answer. dont use ** in the outputs.',
+        system: 'You are a stock analysis agent and answer in detail only questions related to stock market, investment and related stuff. Answer based on the given analysis, or recommend whether to buy the stock in the current market condition.If the question is on general part give a professional answer. dont use ** in the outputs.',
         prompt: `Question: ${question}
         Technical Ratings: ${JSON.stringify(Technical_Rating)}
         Fundamental Ratings: ${JSON.stringify(Fundamental_Rating)}`,
@@ -431,6 +434,7 @@ async function EachStockAnalysis(symbol) {
   const response = await generateObject({
       model: google('gemini-1.5-pro-latest'),
       apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+      system: "Answer in short but with all details which means use less words but include all the details.",
       schema: z.object({
           Technical_Analysis_Rating: z.number().describe('Final rating of the stock from 1 to 10 based on the each technical analysis.'),
           Technical_Analysis_Explination: z.string().describe('a short explination of the rating of the stock from 1 to 10 based on the each technical analysis.'),

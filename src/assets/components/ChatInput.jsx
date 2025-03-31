@@ -8,6 +8,7 @@ const ChatInput = ({ onSendMessage, isWaiting }) => {
   const [recognitionError, setRecognitionError] = useState(null);
   const [recognitionAttempts, setRecognitionAttempts] = useState(0);
   const recognitionTimeout = useRef(null);
+  const textareaRef = useRef(null);
 
   // Initialize speech recognition on component mount
   useEffect(() => {
@@ -20,6 +21,20 @@ const ChatInput = ({ onSendMessage, isWaiting }) => {
       stopRecognition();
     };
   }, []);
+
+  // Auto-resize the textarea when input changes
+  useEffect(() => {
+    if (textareaRef.current) {
+      // Reset height to auto to get the correct scrollHeight
+      textareaRef.current.style.height = 'auto';
+      
+      // Calculate the new height (with a minimum of 40px)
+      const newHeight = Math.max(40, Math.min(textareaRef.current.scrollHeight, 200));
+      
+      // Set the new height
+      textareaRef.current.style.height = `${newHeight}px`;
+    }
+  }, [input]);
 
   const initSpeechRecognition = () => {
     // Check browser support for Speech Recognition
@@ -130,6 +145,11 @@ const ChatInput = ({ onSendMessage, isWaiting }) => {
       
       // Stop listening if active
       stopRecognition();
+      
+      // Reset textarea height
+      if (textareaRef.current) {
+        textareaRef.current.style.height = '40px';
+      }
     }
   };
 
@@ -149,6 +169,7 @@ const ChatInput = ({ onSendMessage, isWaiting }) => {
     <div className="chat-input-container">
       <form onSubmit={handleSubmit} className="chat-input-form">
         <textarea
+          ref={textareaRef}
           className="chat-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -158,7 +179,6 @@ const ChatInput = ({ onSendMessage, isWaiting }) => {
             isListening ? "Listening..." : 
             "Message StockGPT..."
           }
-          rows={input.split('\n').length > 3 ? 3 : input.split('\n').length || 1}
           disabled={isWaiting}
         />
         

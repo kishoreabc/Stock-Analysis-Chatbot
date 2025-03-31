@@ -1,142 +1,172 @@
-/* ChatInput.css */
 .chat-input-container {
-    position: sticky;
-    bottom: 0;
-    width: 100%;
-    padding: 0.5rem 2rem 1.5rem;
-    background-color: white;
-    border-top: 1px solid #f0f0f0;
+  position: relative;
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fff;
+}
+
+.chat-input-form {
+  display: flex;
+  align-items: flex-end;
+  background-color: #f0f2f5;
+  border-radius: 24px;
+  padding: 8px 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
+}
+
+.chat-input-form:focus-within {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.chat-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 8px;
+  font-size: 16px;
+  resize: none;
+  min-height: 40px;
+  max-height: 200px;
+  line-height: 1.5;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  outline: none;
+  transition: height 0.2s ease;
+}
+
+.chat-input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.voice-button, 
+.send-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  margin-left: 4px;
+  transition: background-color 0.2s;
+}
+
+.voice-button svg,
+.send-button svg {
+  width: 22px;
+  height: 22px;
+  color: #2b5dfc;
+}
+
+.voice-button:hover,
+.send-button:hover {
+  background-color: rgba(43, 93, 252, 0.1);
+}
+
+.voice-button.listening {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.voice-button.listening svg {
+  color: #f44336;
+  animation: pulse 1.5s infinite;
+}
+
+.voice-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.send-button:disabled svg {
+  color: #9e9e9e;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.error-container {
+  margin-top: 8px;
+  color: #f44336;
+  font-size: 14px;
+}
+
+.quick-phrases {
+  margin-top: 12px;
+}
+
+.quick-phrases p {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.phrases-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.phrases-buttons button {
+  background-color: #e9f0fe;
+  border: none;
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #2b5dfc;
+  transition: background-color 0.2s;
+}
+
+.phrases-buttons button:hover {
+  background-color: #d9e6fe;
+}
+
+.input-footer {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.disclaimer {
+  font-size: 12px;
+  color: #757575;
+  margin: 0;
+}
+
+.voice-active {
+  color: #f44336;
+  font-weight: 500;
+}
+
+/* For smaller screens */
+@media (max-width: 768px) {
+  .chat-input-container {
+    padding: 12px 8px;
   }
   
-  .chat-input-form {
-    display: flex;
-    align-items: flex-end;
-    gap: 0.5rem;
-    width: 100%;
-    max-width: 48rem;
-    margin: 0 auto;
-    border: 1px solid #e5e5e5;
-    border-radius: 0.75rem;
-    background-color: #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    padding: 0.75rem 1rem;
-    transition: background-color 0.2s;
+  .quick-phrases {
+    margin-top: 8px;
   }
   
-  .chat-input-form:has(.chat-input:disabled) {
-    background-color: #f5f5f5;
-    opacity: 0.8;
+  .phrases-buttons {
+    flex-direction: column;
   }
-  
-  .chat-input {
-    flex: 1;
-    resize: none;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 1rem;
-    font-family: inherit;
-    padding: 0;
-    line-height: 1.5;
-    max-height: 200px;
-    overflow-y: auto;
-  }
-  
-  .chat-input:disabled {
-    color: #888;
-    cursor: not-allowed;
-    background-color: transparent;
-  }
-  
-  .send-button, .voice-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.25rem;
-    transition: all 0.2s;
-  }
-  
-  .send-button {
-    color: #10a37f;
-    opacity: 0.7;
-  }
-  
-  .voice-button {
-    color: #5436DA;
-    opacity: 0.7;
-  }
-  
-  .voice-button.listening {
-    color: #ff4a4a;
-    opacity: 1;
-    animation: pulse 1.5s infinite;
-  }
-  
-  .send-button:hover:not(:disabled),
-  .voice-button:hover:not(:disabled) {
-    opacity: 1;
-  }
-  
-  .send-button:hover:not(:disabled) {
-    background-color: rgba(16, 163, 127, 0.1);
-  }
-  
-  .voice-button:hover:not(:disabled) {
-    background-color: rgba(84, 54, 218, 0.1);
-  }
-  
-  .voice-button.listening:hover {
-    background-color: rgba(255, 74, 74, 0.1);
-  }
-  
-  .send-button:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-  
-  .send-button svg, .voice-button svg {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .input-footer {
-    margin-top: 0.5rem;
-    text-align: center;
-  }
-  
-  .disclaimer {
-    font-size: 0.8rem;
-    color: #8e8ea0;
-  }
-  
-  .disclaimer.voice-active {
-    color: #ff4a4a;
-    font-weight: 500;
-  }
-  
-  @keyframes pulse {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
-  }
-  
-  /* Add a message for browsers that don't support the API */
-  .voice-not-supported {
-    display: block;
-    text-align: center;
-    font-size: 0.75rem;
-    color: #ff4a4a;
-    margin-top: 0.5rem;
-  }
-  /* Add this to your ChatInput.css file */
-.disclaimer.error {
-    color: #e74c3c;
-    font-weight: 500;
-  }
+}
