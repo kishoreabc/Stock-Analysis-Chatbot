@@ -16,14 +16,39 @@ const PORT = 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-
-
 const today = new Date();
 const year = today.getFullYear();
 const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed, so add 1
 const day = String(today.getDate()).padStart(2, '0');
 
-
+// Function to remove markdown formatting from text
+function removeMarkdown(text) {
+  if (!text) return text;
+  
+  // Replace bold markdown (** or __)
+  text = text.replace(/\*\*(.*?)\*\*/g, '$1');
+  text = text.replace(/__(.*?)__/g, '$1');
+  
+  // Replace italic markdown (* or _)
+  text = text.replace(/\*(.*?)\*/g, '$1');
+  text = text.replace(/_(.*?)_/g, '$1');
+  
+  // Replace headers (# Header)
+  text = text.replace(/^#+\s+(.*?)$/gm, '$1');
+  
+  // Replace lists
+  text = text.replace(/^\s*[\*\-\+]\s+/gm, '• ');
+  text = text.replace(/^\s*\d+\.\s+/gm, '• ');
+  
+  // Replace code blocks
+  text = text.replace(/```(?:.*?)\n([\s\S]*?)```/g, '$1');
+  text = text.replace(/`(.*?)`/g, '$1');
+  
+  // Replace links
+  text = text.replace(/\[(.*?)\]\((.*?)\)/g, '$1 ($2)');
+  
+  return text;
+}
 
 app.post("/api/chat", async (req, res) => {
   const userMessage = req.body.message;
@@ -32,11 +57,11 @@ app.post("/api/chat", async (req, res) => {
   }
   const input = userMessage;
   const { object } = await generateObject({
-    model: google('gemini-1.5-pro-latest'),
+    model: google('gemini-2.0-flash'),
     apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
     system: 'seperate question and stock names from the input.',
     schema: z.object({
-      stock_name: z.array(z.string()).describe('List of stock names as named in yahoo finance. For example: ITC.NS, RELIANCE.NS, etc.'),
+      stock_name: z.array(z.string()).describe('List of stock names from the prompt and change name as named in yahoo finance. For example: ITC.NS, RELIANCE.NS, etc.'),
       question : z.string().describe('question that the user are expexting from the stock. Don\'t include the stock names.'),
       
     }),
@@ -47,7 +72,6 @@ app.post("/api/chat", async (req, res) => {
   console.log(stock_name);
   console.log(question);
   await delay(1000);
-
 
   
 let Technical_Rating = [];
@@ -65,19 +89,23 @@ let Fundamental_Rating = [];
     console.log(`Technical Ratings: ${JSON.stringify(Technical_Rating)}
         Fundamental Ratings: ${JSON.stringify(Fundamental_Rating)}`);
     const { text } = await generateText({
-        model: google('gemini-1.5-pro'),
+        model: google('gemini-2.0-flash'),
         apiKey: process.env.GOOGLE_API_KEY,
-        system: 'You are a stock analysis agent and answer in detail only questions related to stock market, investment and related stuff. Answer based on the given analysis, or recommend whether to buy the stock in the current market condition.If the question is on general part give a professional answer. dont use ** in the outputs.',
+        system: 'You are a stock analysis agent and answer in detail only questions related to stock market, investment and related stuff. Answer based on the given analysis asuming that the analysis are generate by you, or recommend whether to buy the stock in the current market condition. If the question is on general part give a professional answer. Do not use any markdown, formatting symbols, or special characters in your response. Write in plain text only.',
         prompt: `Question: ${question}
         Technical Ratings: ${JSON.stringify(Technical_Rating)}
         Fundamental Ratings: ${JSON.stringify(Fundamental_Rating)}`,
     });
+
+    // Process the response to remove any markdown that might still be present
+    const cleanedText = removeMarkdown(text);
+    
     const aiResponse = {
       id: Date.now(),
-      content: text,
+      content: cleanedText,
       sender: "ai",
     };
-      console.log(text);
+      console.log(cleanedText);
       res.json(aiResponse);
     
 })();
@@ -122,9 +150,6 @@ async function getRSI(symbol, period = 14) {
   }
 }
 
-// getRSI("RELIANCE.NS");
-
-
 async function getSMA(symbol, period = 50) {
   try {
       const data = await yahooFinance.chart(symbol, { period1:`${year-1}-${month}-${day}`, interval: "1d" });
@@ -137,10 +162,6 @@ async function getSMA(symbol, period = 50) {
       console.error("Error fetching SMA:", error);
   }
 }
-
-// getSMA("RELIANCE.NS");
-
-
 
 async function getEMA(symbol, period = 20) {
   try {
@@ -170,8 +191,6 @@ async function getEMA(symbol, period = 20) {
       console.error("Error fetching data:", error);
   }
 }
-
-// getEMA("ITC.NS"); // Example usage for Apple stock
 
 async function getMACD(symbol) {
   try {
@@ -205,10 +224,6 @@ async function getMACD(symbol) {
       console.error("Error fetching MACD:", error);
   }
 }
-
-// getMACD("ITC.NS");
-
-
 
 async function getATR(symbol) {
   try {
@@ -251,11 +266,6 @@ async function getATR(symbol) {
       console.error("Error fetching ATR:", error);
   }
 }
-
-// getATR("ITC.NS"); // Example usage for ITC stock
-
-
-
 
 async function getBollingerBands(symbol) {
   try {
@@ -310,9 +320,6 @@ async function getBollingerBands(symbol) {
   }
 }
 
-// getBollingerBands("ITC.NS");
-
-
 async function getWilliamsR(symbol, period = 14) {
   try {
       const data = await yahooFinance.chart(symbol, { period1: `${year}-${month-1}-${day}`, interval: "1d" });
@@ -349,10 +356,6 @@ async function getWilliamsR(symbol, period = 14) {
       return [];
   }
 }
-
-// getWilliamsR("AAPL"); // Example with Apple stock
-
-
 
 async function getIchimokuCloud(symbol) {
   const today_month = today.getMonth() + 1; // Months are 0-indexed, so add 1
@@ -403,8 +406,6 @@ async function getIchimokuCloud(symbol) {
   }
 }
 
-// getIchimokuCloud("ITC.NS"); // Example for Apple stock
-
 async function getStockOverview(symbol) {
   try {
       const result = await yahooFinance.quote(symbol);
@@ -413,6 +414,7 @@ async function getStockOverview(symbol) {
       console.error("Error fetching stock overview:", error);
   }
 }
+
 async function calculateIndicators(symbol) {
   return JSON.stringify({
       SMA: await getSMA(symbol),
@@ -425,7 +427,6 @@ async function calculateIndicators(symbol) {
       Ichimoku_last5Days: await getIchimokuCloud(symbol)
   });
 }
-// calculateIndicators("ITC.NS").then(result => console.log(result)); or use as function
 
 async function EachStockAnalysis(symbol) {
   const Fundamental_Analysis_result = {"Fundamental Analysis Result":await getStockOverview(symbol)};
@@ -434,7 +435,7 @@ async function EachStockAnalysis(symbol) {
   const response = await generateObject({
       model: google('gemini-1.5-pro-latest'),
       apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-      system: "Answer in short but with all details which means use less words but include all the details.",
+      system: "Answer in short but with all details which means use less words but include all the details. Do not use markdown formatting in your response.",
       schema: z.object({
           Technical_Analysis_Rating: z.number().describe('Final rating of the stock from 1 to 10 based on the each technical analysis.'),
           Technical_Analysis_Explination: z.string().describe('a short explination of the rating of the stock from 1 to 10 based on the each technical analysis.'),
